@@ -27,10 +27,10 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            background: #69e1bb;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
+            box-shadow: 0 4px 12px rgba(105, 225, 187, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -64,7 +64,7 @@
 
         #chat-widget-button:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(46, 204, 113, 0.6);
+            box-shadow: 0 6px 16px rgba(105, 225, 187, 0.6);
         }
 
         #chat-widget-button svg {
@@ -108,7 +108,7 @@
 
         /* Header */
         #chat-header {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            background: #69e1bb;
             color: white;
             padding: 20px;
             display: flex;
@@ -175,7 +175,7 @@
         }
 
         #chat-messages::-webkit-scrollbar-thumb {
-            background: #27ae60;
+            background: #69e1bb;
             border-radius: 3px;
         }
 
@@ -216,7 +216,7 @@
         }
 
         .message.user .message-bubble {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            background: #69e1bb;
             color: white;
             border-bottom-right-radius: 4px;
         }
@@ -246,7 +246,7 @@
 
         .message.user .message-label {
             text-align: right;
-            color: #27ae60;
+            color: #69e1bb;
         }
 
         .message.bot .message-label {
@@ -296,14 +296,14 @@
         }
 
         #chat-input:focus {
-            border-color: #2ecc71;
+            border-color: #69e1bb;
         }
 
         #chat-send-button {
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            background: #69e1bb;
             border: none;
             cursor: pointer;
             display: flex;
@@ -540,7 +540,7 @@
             return escapedText.replace(urlRegex, (url) => {
                 // Remove trailing punctuation that's not part of the URL
                 let cleanUrl = url.replace(/[.,;:!?)\]]+$/, '');
-                return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer" style="color: #2ecc71; text-decoration: underline; word-break: break-all;">${cleanUrl}</a>`;
+                return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer" style="color: #69e1bb; text-decoration: underline; word-break: break-all;">${cleanUrl}</a>`;
             });
         }
 
@@ -634,7 +634,7 @@
 
             const bubbleDiv = document.createElement('div');
             bubbleDiv.className = 'message-bubble';
-            bubbleDiv.innerHTML = '<div class="typing-clock"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#27ae60"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg></div>';
+            bubbleDiv.innerHTML = '<div class="typing-clock"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#69e1bb"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg></div>';
 
             typingDiv.appendChild(bubbleDiv);
             messagesContainer.appendChild(typingDiv);
