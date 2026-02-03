@@ -457,6 +457,10 @@
                         console.error('Error loading messages:', error);
                     }
                     renderMessages([]);
+                    // Show greeting immediately if no conversation exists
+                    if (!idleGreetingShown && widgetWindow.classList.contains('open')) {
+                        showIdleGreeting();
+                    }
                     return;
                 }
 
@@ -474,20 +478,28 @@
                     console.log('Is array?', Array.isArray(messages));
                     console.log('First few messages:', messages.slice(0, 3));
 
-                    // If there are already messages, mark that user has interacted
-                    if (Array.isArray(messages) && messages.length > 0) {
-                        hasUserSentMessage = true;
-                        idleGreetingShown = true;
-                    }
-
                     renderMessages(messages);
+
+                    // If there are existing messages, start the 20-second timer
+                    // (greeting will show once if user doesn't type)
+                    if (Array.isArray(messages) && messages.length > 0) {
+                        startIdleGreetingTimer();
+                    }
                 } else {
                     console.log('No message_history in response');
                     renderMessages([]);
+                    // Show greeting immediately if no messages
+                    if (!idleGreetingShown && widgetWindow.classList.contains('open')) {
+                        showIdleGreeting();
+                    }
                 }
             } catch (err) {
                 console.error('Exception loading messages:', err);
                 renderMessages([]);
+                // Show greeting immediately on error
+                if (!idleGreetingShown && widgetWindow.classList.contains('open')) {
+                    showIdleGreeting();
+                }
             }
         }
 
@@ -558,13 +570,15 @@
             console.log('renderMessages called with:', typeof messages, messages);
             console.log('Is array?', Array.isArray(messages));
             console.log('Length:', messages ? messages.length : 'N/A');
-            
-            messagesContainer.innerHTML = '';
-            
+
             if (!Array.isArray(messages) || messages.length === 0) {
                 console.log('No messages to render - Array check failed or length is 0');
-                // Add empty class to show placeholder text
-                messagesContainer.classList.add('empty');
+                // Don't clear container if greeting is already shown
+                if (!idleGreetingShown) {
+                    messagesContainer.innerHTML = '';
+                    // Add empty class to show placeholder text
+                    messagesContainer.classList.add('empty');
+                }
                 // If waiting for response, show typing indicator
                 if (isWaitingForResponse) {
                     messagesContainer.classList.remove('empty');
@@ -572,6 +586,8 @@
                 }
                 return;
             }
+
+            messagesContainer.innerHTML = '';
 
             // Remove empty class when there are messages
             messagesContainer.classList.remove('empty');
