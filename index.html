@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crescore Assistenz - Chatbot Widget</title>
+    <title>Chat with NEO</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -154,7 +154,7 @@
         }
 
         #chat-messages.empty::before {
-            content: 'Willkommen bei Cresco!\AWie kann ich Ihnen helfen?';
+            content: 'Willkommen!\AWie kann ich Ihnen helfen?';
             white-space: pre-line;
             position: absolute;
             top: 50%;
@@ -373,7 +373,7 @@
     <!-- Chat Widget Window -->
     <div id="chat-widget-window">
         <div id="chat-header">
-            <h3>Crescore Assistenz</h3>
+            <h3>Chat with NEO</h3>
             <button id="chat-close-button" aria-label="Chat schließen">&times;</button>
         </div>
         <div id="chat-messages"></div>
@@ -397,7 +397,7 @@
         const SUPABASE_URL = 'https://zmbyuttcrryflthbeypa.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InptYnl1dHRjcnJ5Zmx0aGJleXBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMjkwNjksImV4cCI6MjA3ODcwNTA2OX0.SpaXrosRhGpzbW-PpnNw6HFmMThEiUaiC43eLQBJSa0';
         const API_ENDPOINT = 'https://api.telefonagent.com/webhook/b2a300c1-3345-44e8-a5e9-660d10b79984';
-        const CHATBOT_NAME = 'Crescore';
+        const CHATBOT_NAME = 'NEO';
 
         // Initialize Supabase Client
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -416,6 +416,9 @@
         let lastReadMessageIndex = -1;
         let isWaitingForResponse = false;
         const notificationBadge = document.getElementById('notification-badge');
+        let hasUserSentMessage = false;
+        let idleGreetingTimer = null;
+        let idleGreetingShown = false;
 
         // Initialize Widget
         async function initWidget() {
@@ -459,18 +462,24 @@
 
                 if (data && data.message_history) {
                     let messages = data.message_history;
-                    
+
                     // Handle if message_history is a string (shouldn't happen with jsonb, but just in case)
                     if (typeof messages === 'string') {
                         console.log('message_history is a string, parsing...');
                         messages = JSON.parse(messages);
                     }
-                    
+
                     console.log('Messages loaded:', messages.length);
                     console.log('Type of message_history:', typeof messages);
                     console.log('Is array?', Array.isArray(messages));
                     console.log('First few messages:', messages.slice(0, 3));
-                    
+
+                    // If there are already messages, mark that user has interacted
+                    if (Array.isArray(messages) && messages.length > 0) {
+                        hasUserSentMessage = true;
+                        idleGreetingShown = true;
+                    }
+
                     renderMessages(messages);
                 } else {
                     console.log('No message_history in response');
@@ -695,6 +704,15 @@
             const message = inputField.value.trim();
             if (!message) return;
 
+            // Mark that user has sent a message
+            hasUserSentMessage = true;
+
+            // Clear idle greeting timer
+            if (idleGreetingTimer) {
+                clearTimeout(idleGreetingTimer);
+                idleGreetingTimer = null;
+            }
+
             // Disable input while sending
             inputField.disabled = true;
             sendButton.disabled = true;
@@ -707,7 +725,7 @@
                     sessionid: sessionId,
                     timestamp: Math.floor(Date.now() / 1000),
                     message: message,
-                    chatbot_name: "Crescore",
+                    chatbot_name: "NEO",
                     type: "user"
                 };
 
@@ -746,22 +764,85 @@
             }
         }
 
+        // Show Idle Greeting Message
+        function showIdleGreeting() {
+            if (hasUserSentMessage || idleGreetingShown) return;
+
+            idleGreetingShown = true;
+
+            // Remove empty class
+            messagesContainer.classList.remove('empty');
+
+            // Create greeting message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'message-label';
+            labelDiv.textContent = 'NEO';
+
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            bubbleDiv.textContent = 'Hey… nice to meet you. I am NEO, can I assist you?';
+
+            const timestampDiv = document.createElement('div');
+            timestampDiv.className = 'message-timestamp';
+            timestampDiv.textContent = formatTimestamp(Math.floor(Date.now() / 1000));
+
+            messageDiv.appendChild(labelDiv);
+            messageDiv.appendChild(bubbleDiv);
+            messageDiv.appendChild(timestampDiv);
+            messagesContainer.appendChild(messageDiv);
+
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Start Idle Greeting Timer
+        function startIdleGreetingTimer() {
+            // Clear any existing timer
+            if (idleGreetingTimer) {
+                clearTimeout(idleGreetingTimer);
+            }
+
+            // Only start if user hasn't sent a message and greeting not shown
+            if (!hasUserSentMessage && !idleGreetingShown) {
+                idleGreetingTimer = setTimeout(() => {
+                    if (widgetWindow.classList.contains('open')) {
+                        showIdleGreeting();
+                    }
+                }, 20000); // 20 seconds
+            }
+        }
+
         // Event Listeners
         widgetButton.addEventListener('click', async () => {
             // Toggle chat window
             if (widgetWindow.classList.contains('open')) {
                 widgetWindow.classList.remove('open');
+                // Clear timer when closing
+                if (idleGreetingTimer) {
+                    clearTimeout(idleGreetingTimer);
+                    idleGreetingTimer = null;
+                }
             } else {
                 widgetWindow.classList.add('open');
                 notificationBadge.classList.remove('show');
                 // Reload messages when opening the widget
                 await loadMessages();
                 inputField.focus();
+                // Start idle greeting timer
+                startIdleGreetingTimer();
             }
         });
 
         closeButton.addEventListener('click', () => {
             widgetWindow.classList.remove('open');
+            // Clear timer when closing
+            if (idleGreetingTimer) {
+                clearTimeout(idleGreetingTimer);
+                idleGreetingTimer = null;
+            }
         });
 
         sendButton.addEventListener('click', sendMessage);
