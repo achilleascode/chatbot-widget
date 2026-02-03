@@ -419,6 +419,7 @@
         let hasUserSentMessage = false;
         let idleGreetingTimer = null;
         let idleGreetingShown = false;
+        let greetingTimestamp = null;
 
         // Initialize Widget
         async function initWidget() {
@@ -573,9 +574,13 @@
 
             if (!Array.isArray(messages) || messages.length === 0) {
                 console.log('No messages to render - Array check failed or length is 0');
-                // Don't clear container if greeting is already shown
-                if (!idleGreetingShown) {
-                    messagesContainer.innerHTML = '';
+                messagesContainer.innerHTML = '';
+
+                // Re-add greeting if it was shown
+                if (idleGreetingShown && greetingTimestamp) {
+                    messagesContainer.classList.remove('empty');
+                    appendGreetingMessage();
+                } else {
                     // Add empty class to show placeholder text
                     messagesContainer.classList.add('empty');
                 }
@@ -592,6 +597,11 @@
             // Remove empty class when there are messages
             messagesContainer.classList.remove('empty');
 
+            // Add greeting message first if it was shown
+            if (idleGreetingShown && greetingTimestamp) {
+                appendGreetingMessage();
+            }
+
             messages.forEach(msg => {
                 const messageDiv = document.createElement('div');
                 const messageType = msg.type || 'bot';
@@ -600,7 +610,8 @@
                 // Add label
                 const labelDiv = document.createElement('div');
                 labelDiv.className = 'message-label';
-                labelDiv.textContent = messageType.charAt(0).toUpperCase() + messageType.slice(1);
+                // Show "NEO" for bot messages, otherwise capitalize the type
+                labelDiv.textContent = messageType === 'bot' ? 'NEO' : messageType.charAt(0).toUpperCase() + messageType.slice(1);
 
                 const bubbleDiv = document.createElement('div');
                 bubbleDiv.className = 'message-bubble';
@@ -785,13 +796,23 @@
             if (hasUserSentMessage || idleGreetingShown) return;
 
             idleGreetingShown = true;
+            greetingTimestamp = Math.floor(Date.now() / 1000);
 
             // Remove empty class
             messagesContainer.classList.remove('empty');
 
-            // Create greeting message
+            // Create and append greeting message
+            appendGreetingMessage();
+
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Append the greeting message to the container
+        function appendGreetingMessage() {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message bot';
+            messageDiv.id = 'neo-greeting';
 
             const labelDiv = document.createElement('div');
             labelDiv.className = 'message-label';
@@ -803,15 +824,12 @@
 
             const timestampDiv = document.createElement('div');
             timestampDiv.className = 'message-timestamp';
-            timestampDiv.textContent = formatTimestamp(Math.floor(Date.now() / 1000));
+            timestampDiv.textContent = formatTimestamp(greetingTimestamp);
 
             messageDiv.appendChild(labelDiv);
             messageDiv.appendChild(bubbleDiv);
             messageDiv.appendChild(timestampDiv);
             messagesContainer.appendChild(messageDiv);
-
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         // Start Idle Greeting Timer
