@@ -416,10 +416,13 @@
         let lastReadMessageIndex = -1;
         let isWaitingForResponse = false;
         const notificationBadge = document.getElementById('notification-badge');
-        let hasUserSentMessage = false;
         let idleGreetingTimer = null;
-        let idleGreetingShown = false;
-        let greetingTimestamp = null;
+
+        // Load greeting state from sessionStorage
+        let idleGreetingShown = sessionStorage.getItem('neo_greeting_shown') === 'true';
+        let greetingTimestamp = sessionStorage.getItem('neo_greeting_timestamp')
+            ? parseInt(sessionStorage.getItem('neo_greeting_timestamp'))
+            : null;
 
         // Initialize Widget
         async function initWidget() {
@@ -429,6 +432,11 @@
                 sessionId = crypto.randomUUID();
                 localStorage.setItem('crescore_session_id', sessionId);
                 console.log('New session created:', sessionId);
+                // Clear greeting state for new session
+                sessionStorage.removeItem('neo_greeting_shown');
+                sessionStorage.removeItem('neo_greeting_timestamp');
+                idleGreetingShown = false;
+                greetingTimestamp = null;
             } else {
                 console.log('Existing session loaded:', sessionId);
             }
@@ -731,9 +739,6 @@
             const message = inputField.value.trim();
             if (!message) return;
 
-            // Mark that user has sent a message
-            hasUserSentMessage = true;
-
             // Clear idle greeting timer
             if (idleGreetingTimer) {
                 clearTimeout(idleGreetingTimer);
@@ -793,10 +798,14 @@
 
         // Show Idle Greeting Message
         function showIdleGreeting() {
-            if (hasUserSentMessage || idleGreetingShown) return;
+            if (idleGreetingShown) return;
 
             idleGreetingShown = true;
             greetingTimestamp = Math.floor(Date.now() / 1000);
+
+            // Save to sessionStorage
+            sessionStorage.setItem('neo_greeting_shown', 'true');
+            sessionStorage.setItem('neo_greeting_timestamp', greetingTimestamp.toString());
 
             // Remove empty class
             messagesContainer.classList.remove('empty');
@@ -839,8 +848,8 @@
                 clearTimeout(idleGreetingTimer);
             }
 
-            // Only start if user hasn't sent a message and greeting not shown
-            if (!hasUserSentMessage && !idleGreetingShown) {
+            // Only start if greeting not already shown
+            if (!idleGreetingShown) {
                 idleGreetingTimer = setTimeout(() => {
                     if (widgetWindow.classList.contains('open')) {
                         showIdleGreeting();
