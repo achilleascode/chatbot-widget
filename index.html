@@ -876,12 +876,25 @@
             }
         }
 
+        // Notify parent window of size change
+        function notifyParentOfSize(isOpen) {
+            if (window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'neo-chat-resize',
+                    isOpen: isOpen,
+                    width: isOpen ? 460 : 100,
+                    height: isOpen ? 670 : 100
+                }, '*');
+            }
+        }
+
         // Event Listeners
         widgetButton.addEventListener('click', async () => {
             // Toggle chat window
             if (widgetWindow.classList.contains('open')) {
                 widgetWindow.classList.remove('open');
                 document.body.classList.remove('chat-open');
+                notifyParentOfSize(false);
                 // Clear timer when closing
                 if (idleGreetingTimer) {
                     clearTimeout(idleGreetingTimer);
@@ -890,6 +903,7 @@
             } else {
                 widgetWindow.classList.add('open');
                 document.body.classList.add('chat-open');
+                notifyParentOfSize(true);
                 notificationBadge.classList.remove('show');
                 // Reload messages when opening the widget
                 await loadMessages();
@@ -902,6 +916,7 @@
         closeButton.addEventListener('click', () => {
             widgetWindow.classList.remove('open');
             document.body.classList.remove('chat-open');
+            notifyParentOfSize(false);
             // Clear timer when closing
             if (idleGreetingTimer) {
                 clearTimeout(idleGreetingTimer);
