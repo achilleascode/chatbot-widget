@@ -5,11 +5,18 @@
  * <script src="https://YOUR_DOMAIN/embed.js"></script>
  *
  * Or copy the code below directly into your HTML before </body>
+ *
+ * Dimensions:
+ * - Closed: 100x100px (only the chat button)
+ * - Open: 440x650px (chat window + button)
  */
 
 (function() {
     // Configuration - Change this to your widget URL
-    var WIDGET_URL = window.NEO_CHAT_URL || 'https://chatbot-widget-1.vercel.app/';
+    var WIDGET_URL = window.NEO_CHAT_URL || 'https://chatbot-widget-oi5ni9l86-achuls-projects.vercel.app/';
+
+    // Dimensions: closed = 100x100 (button only), open = 440x650 (chat + button)
+    var CLOSED_SIZE = { width: 100, height: 100 };
 
     // Create iframe
     var iframe = document.createElement('iframe');
@@ -19,12 +26,13 @@
         'position: fixed',
         'bottom: 0',
         'right: 0',
-        'width: 100px',
-        'height: 100px',
+        'width: ' + CLOSED_SIZE.width + 'px',
+        'height: ' + CLOSED_SIZE.height + 'px',
         'border: none',
         'background: transparent',
         'z-index: 2147483647',
-        'transition: width 0.3s ease, height 0.3s ease'
+        'transition: width 0.3s ease, height 0.3s ease',
+        'pointer-events: auto'
     ].join(';');
     iframe.setAttribute('allowtransparency', 'true');
     iframe.setAttribute('frameborder', '0');

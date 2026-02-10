@@ -41,7 +41,7 @@
     <p>Fügen Sie diesen Code vor dem schließenden <code>&lt;/body&gt;</code> Tag ein:</p>
 
     <div class="code-block">
-        <code>&lt;script src="https://chatbot-widget-1.vercel.app/embed.js"&gt;&lt;/script&gt;</code>
+        <code>&lt;script src="https://chatbot-widget-oi5ni9l86-achuls-projects.vercel.app/embed.js"&gt;&lt;/script&gt;</code>
     </div>
 
     <h2>Option 2: Mit eigener Widget-URL</h2>
@@ -51,7 +51,7 @@
 <code>&lt;script&gt;
     window.NEO_CHAT_URL = 'https://ihre-domain.com/widget/';
 &lt;/script&gt;
-&lt;script src="https://chatbot-widget-1.vercel.app/embed.js"&gt;&lt;/script&gt;</code>
+&lt;script src="https://chatbot-widget-oi5ni9l86-achuls-projects.vercel.app/embed.js"&gt;&lt;/script&gt;</code>
     </div>
 
     <h2>Option 3: Inline Code</h2>
@@ -60,11 +60,11 @@
     <div class="code-block">
 <code>&lt;script&gt;
 (function() {
-    var WIDGET_URL = 'https://chatbot-widget-1.vercel.app/';
+    var WIDGET_URL = 'https://chatbot-widget-oi5ni9l86-achuls-projects.vercel.app/';
     var iframe = document.createElement('iframe');
     iframe.id = 'neo-chat-widget';
     iframe.src = WIDGET_URL;
-    iframe.style.cssText = 'position:fixed;bottom:0;right:0;width:100px;height:100px;border:none;background:transparent;z-index:2147483647;transition:width 0.3s ease,height 0.3s ease';
+    iframe.style.cssText = 'position:fixed;bottom:0;right:0;width:100px;height:100px;border:none;background:transparent;z-index:2147483647;transition:width 0.3s ease,height 0.3s ease;pointer-events:auto';
     iframe.setAttribute('allowtransparency', 'true');
     window.addEventListener('message', function(e) {
         if (e.data && e.data.type === 'neo-chat-resize') {
@@ -76,6 +76,12 @@
 })();
 &lt;/script&gt;</code>
     </div>
+
+    <h3>Maße:</h3>
+    <ul>
+        <li><strong>Geschlossen:</strong> 100x100px (nur der Chat-Button)</li>
+        <li><strong>Offen:</strong> 440x650px (Chat-Fenster + Button)</li>
+    </ul>
 
     <hr style="margin: 40px 0;">
 
@@ -93,7 +99,7 @@
         var iframe = document.createElement('iframe');
         iframe.id = 'neo-chat-widget';
         iframe.src = WIDGET_URL;
-        iframe.style.cssText = 'position:fixed;bottom:0;right:0;width:100px;height:100px;border:none;background:transparent;z-index:2147483647;transition:width 0.3s ease,height 0.3s ease';
+        iframe.style.cssText = 'position:fixed;bottom:0;right:0;width:100px;height:100px;border:none;background:transparent;z-index:2147483647;transition:width 0.3s ease,height 0.3s ease;pointer-events:auto';
         iframe.setAttribute('allowtransparency', 'true');
         window.addEventListener('message', function(e) {
             if (e.data && e.data.type === 'neo-chat-resize') {
