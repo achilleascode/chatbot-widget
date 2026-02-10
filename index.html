@@ -12,26 +12,15 @@
             box-sizing: border-box;
         }
 
-        html {
+        html, body {
+            width: 100%;
+            height: 100%;
             background-color: transparent;
+            overflow: visible;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: transparent;
-            /* Closed: Only button area (60px button + 20px margin + 20px for badge) */
-            width: 100px;
-            height: 100px;
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            overflow: visible;
-        }
-
-        /* Expand body when chat is open (420px chat + 20px margin, 550px chat + 100px bottom offset) */
-        body.chat-open {
-            width: 440px;
-            height: 650px;
         }
 
         /* Chat Widget Button */
@@ -365,11 +354,6 @@
 
         /* Mobile Responsive */
         @media (max-width: 480px) {
-            body.chat-open {
-                width: 100vw;
-                height: 100vh;
-            }
-
             #chat-widget-window {
                 width: calc(100vw - 40px);
                 height: calc(100vh - 120px);
@@ -894,7 +878,6 @@
             if (widgetWindow.classList.contains('open')) {
                 // Close: first hide chat, then resize iframe
                 widgetWindow.classList.remove('open');
-                document.body.classList.remove('chat-open');
                 // Small delay before shrinking iframe
                 setTimeout(() => notifyParentOfSize(false), 50);
                 // Clear timer when closing
@@ -904,7 +887,6 @@
                 }
             } else {
                 // Open: first resize iframe, then show chat
-                document.body.classList.add('chat-open');
                 notifyParentOfSize(true);
                 // Wait for iframe to resize before showing chat
                 setTimeout(async () => {
@@ -920,7 +902,6 @@
         closeButton.addEventListener('click', () => {
             // Close: first hide chat, then resize iframe
             widgetWindow.classList.remove('open');
-            document.body.classList.remove('chat-open');
             setTimeout(() => notifyParentOfSize(false), 50);
             // Clear timer when closing
             if (idleGreetingTimer) {
