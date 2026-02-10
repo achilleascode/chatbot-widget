@@ -892,31 +892,36 @@
         widgetButton.addEventListener('click', async () => {
             // Toggle chat window
             if (widgetWindow.classList.contains('open')) {
+                // Close: first hide chat, then resize iframe
                 widgetWindow.classList.remove('open');
                 document.body.classList.remove('chat-open');
-                notifyParentOfSize(false);
+                // Small delay before shrinking iframe
+                setTimeout(() => notifyParentOfSize(false), 50);
                 // Clear timer when closing
                 if (idleGreetingTimer) {
                     clearTimeout(idleGreetingTimer);
                     idleGreetingTimer = null;
                 }
             } else {
-                widgetWindow.classList.add('open');
+                // Open: first resize iframe, then show chat
                 document.body.classList.add('chat-open');
                 notifyParentOfSize(true);
-                notificationBadge.classList.remove('show');
-                // Reload messages when opening the widget
-                await loadMessages();
-                inputField.focus();
-                // Start idle greeting timer
-                startIdleGreetingTimer();
+                // Wait for iframe to resize before showing chat
+                setTimeout(async () => {
+                    widgetWindow.classList.add('open');
+                    notificationBadge.classList.remove('show');
+                    await loadMessages();
+                    inputField.focus();
+                    startIdleGreetingTimer();
+                }, 100);
             }
         });
 
         closeButton.addEventListener('click', () => {
+            // Close: first hide chat, then resize iframe
             widgetWindow.classList.remove('open');
             document.body.classList.remove('chat-open');
-            notifyParentOfSize(false);
+            setTimeout(() => notifyParentOfSize(false), 50);
             // Clear timer when closing
             if (idleGreetingTimer) {
                 clearTimeout(idleGreetingTimer);

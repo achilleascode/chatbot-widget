@@ -13,7 +13,7 @@
 
 (function() {
     // Configuration - Change this to your widget URL
-    var WIDGET_URL = window.NEO_CHAT_URL || 'https://chatbot-widget-oi5ni9l86-achuls-projects.vercel.app/';
+    var WIDGET_URL = window.NEO_CHAT_URL || 'https://chatbot-widget-9yaj.vercel.app/widgets.html';
 
     // Dimensions: closed = 100x100 (button only), open = 440x650 (chat + button)
     var CLOSED_SIZE = { width: 100, height: 100 };
